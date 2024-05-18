@@ -171,4 +171,16 @@
         }
 
         function disableSaveLogBtn(disabled) {
-            document.getElementById
+            document.getElementById('saveLogBtn').disabled = disabled;
+        }
+
+        function updateClock() {
+            const currentTime = new Date();
+            const clockTime = currentTime.toTimeString().split(' ')[0];
+            clockDisplay.innerHTML = clockTime;
+        }
+
+        setInterval(updateClock, 1000);
+    </script>
+</body>
+</html>
