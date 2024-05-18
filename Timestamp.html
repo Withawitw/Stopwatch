@@ -51,9 +51,9 @@
         <div class="time" id="time">00:00:00</div>
         <div class="buttons">
             <button id="startStopBtn">Start</button>
-            <button id="timestampBtn">Timestamp</button>
-            <button id="clearLogBtn">Clear Log</button>
-            <button id="saveLogBtn">Save Log</button>
+            <button id="timestampBtn" style="display: none;">Timestamp</button>
+            <button id="clearLogBtn" style="display: none;">Clear Log</button>
+            <button id="saveLogBtn" style="display: none;">Save Log</button>
         </div>
         <div class="log">
             <h3>Log</h3>
@@ -81,9 +81,17 @@
             if (!running) {
                 start();
                 startStopBtn.textContent = 'Stop';
+                document.getElementById('timestampBtn').style.display = 'inline'; // Show Timestamp button when Start
+                if (timestampCount > 0) {
+                    document.getElementById('clearLogBtn').style.display = 'inline'; // Show Clear Log button when there are Timestamps in log
+                    document.getElementById('saveLogBtn').style.display = 'inline'; // Show Save Log button when there are Timestamps in log
+                }
             } else {
                 stop();
                 startStopBtn.textContent = 'Start';
+                document.getElementById('timestampBtn').style.display = 'none'; // Hide Timestamp button when Stop
+                document.getElementById('clearLogBtn').style.display = 'none'; // Hide Clear Log button when Stop
+                document.getElementById('saveLogBtn').style.display = 'none'; // Hide Save Log button when Stop
             }
         }
 
@@ -99,6 +107,7 @@
         function logTimestamp() {
             if (running) {
                 logAction('Timestamp');
+                timestampCount++;
             }
         }
 
@@ -131,7 +140,6 @@
             const stopwatchTime = timeDisplay.innerHTML;
             const currentTime = new Date();
             const clockTime = currentTime.toTimeString().split(' ')[0];
-            timestampCount++;
             const listItem = document.createElement('li');
             listItem.className = 'log-item';
             listItem.innerHTML = `
@@ -159,7 +167,7 @@
             anchor.download = 'log.txt';
             anchor.href = window.URL.createObjectURL(blob);
             anchor.target = '_blank';
-            anchor.style.display = 'none'; // ไม่ต้องแสดง anchor บนหน้าเว็บ
+            anchor.style.display = 'none'; // Do not display the anchor on the web page
             document.body.appendChild(anchor);
             anchor.click();
             document.body.removeChild(anchor);
