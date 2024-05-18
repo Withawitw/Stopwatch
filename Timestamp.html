@@ -95,11 +95,11 @@
 
         function start() {
             if (!running) {
+                logList.innerHTML = '';
                 startTime = new Date().getTime() - savedTime;
                 tInterval = setInterval(updateTime, 1);
                 running = true;
                 logAction('Started');
-                logList.innerHTML = '';
                 timestampCount = 1;
             }
         }
