@@ -81,9 +81,11 @@
             if (!running) {
                 start();
                 startStopBtn.textContent = 'Stop';
+                document.getElementById('saveLogBtn').disabled = true; // ปิดปุ่ม Save Log เมื่อกด Start
             } else {
                 stop();
                 startStopBtn.textContent = 'Start';
+                document.getElementById('saveLogBtn').disabled = false; // เปิดปุ่ม Save Log เมื่อกด Stop
             }
         }
 
@@ -93,6 +95,7 @@
                 tInterval = setInterval(updateTime, 1);
                 running = true;
                 logAction('Started');
+                disableSaveLogBtn(true); // ปิดปุ่ม Save Log เมื่อเริ่มการทำงาน
             }
         }
 
@@ -109,6 +112,7 @@
                 savedTime = 0;
                 running = false;
                 timeDisplay.innerHTML = "00:00:00";
+                disableSaveLogBtn(false); // เปิดปุ่ม Save Log เมื่อหยุดการทำงาน
             }
         }
 
@@ -153,26 +157,4 @@
                 const spanText = item.querySelector('span').textContent;
                 const input = item.querySelector('input');
                 const inputText = input ? input.value : '';
-                logText += `${spanText} - ${inputText}\n`;
-            }
-            const blob = new Blob([logText], { type: 'text/plain' });
-            const anchor = document.createElement('a');
-            anchor.download = 'log.txt';
-            anchor.href = window.URL.createObjectURL(blob);
-            anchor.target = '_blank';
-            anchor.style.display = 'none';
-            document.body.appendChild(anchor);
-            anchor.click();
-            document.body.removeChild(anchor);
-        }
-
-        function updateClock() {
-            const currentTime = new Date();
-            const clockTime = currentTime.toTimeString().split(' ')[0];
-            clockDisplay.innerHTML = clockTime;
-        }
-
-        setInterval(updateClock, 1000);
-    </script>
-</body>
-</html>
+                logText += `${span
