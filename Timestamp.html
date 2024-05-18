@@ -56,7 +56,7 @@
         <div class="time" id="time">00:00:00</div>
         <div class="buttons">
             <button id="startStopBtn">Start</button>
-            <button id="timestampBtn">Timestamp</button>
+            <button id="timestampBtn" style="display: none;">Timestamp</button>
             <button id="clearLogBtn" style="display: none;">Clear Log</button>
             <button id="saveLogBtn" style="display: none;">Save Log</button>
         </div>
@@ -67,88 +67,118 @@
     </div>
 
     <script>
-        let startTime, updatedTime, difference, tInterval;
-        let savedTime = 0;
-        let running = false;
-        let timestampCount = 0;
+      let startTime, updatedTime, difference, tInterval;
+let savedTime = 0;
+let running = false;
+let timestampCount = 0;
 
-        const timeDisplay = document.getElementById('time');
-        const clockDisplay = document.getElementById('clock');
-        const logList = document.getElementById('logList');
-        const startStopBtn = document.getElementById('startStopBtn');
+const timeDisplay = document.getElementById('time');
+const clockDisplay = document.getElementById('clock');
+const logList = document.getElementById('logList');
+const startStopBtn = document.getElementById('startStopBtn');
+const timestampBtn = document.getElementById('timestampBtn');
+const clearLogBtn = document.getElementById('clearLogBtn');
+const saveLogBtn = document.getElementById('saveLogBtn');
 
-        startStopBtn.addEventListener('click', toggleStartStop);
-        document.getElementById('timestampBtn').addEventListener('click', logTimestamp);
+startStopBtn.addEventListener('click', toggleStartStop);
+timestampBtn.addEventListener('click', logTimestamp);
+clearLogBtn.addEventListener('click', clearLog);
+saveLogBtn.addEventListener('click', saveLog);
 
-        function toggleStartStop() {
-            if (!running) {
-                start();
-                startStopBtn.textContent = 'Stop';
-                document.getElementById('saveLogBtn').disabled = true;
-            } else {
-                stop();
-                startStopBtn.textContent = 'Start';
-                document.getElementById('saveLogBtn').disabled = false;
-                document.getElementById('clearLogBtn').style.display = 'inline-block';
-            }
-        }
+function toggleStartStop() {
+    if (!running) {
+        start();
+        startStopBtn.textContent = 'Stop';
+        timestampBtn.style.display = 'inline-block'; // แสดงปุ่ม Timestamp เมื่อกด Start
+        clearLogBtn.style.display = 'none'; // ซ่อนปุ่ม Clear Log เมื่อกด Start
+        saveLogBtn.style.display = 'none'; // ซ่อนปุ่ม Save Log เมื่อกด Start
+    } else {
+        stop();
+        startStopBtn.textContent = 'Start';
+        timestampBtn.style.display = 'none'; // ซ่อนปุ่ม Timestamp เมื่อกด Stop
+        clearLogBtn.style.display = 'inline-block'; // แสดงปุ่ม Clear Log เมื่อกด Stop
+        saveLogBtn.style.display = 'inline-block'; // แสดงปุ่ม Save Log เมื่อกด Stop
+    }
+}
 
-        function start() {
-            if (!running) {
-                startTime = new Date().getTime() - savedTime;
-                tInterval = setInterval(updateTime, 1);
-                running = true;
-                logAction('Started');
-                document.getElementById('saveLogBtn').disabled = true;
-            }
-        }
+function start() {
+    if (!running) {
+        startTime = new Date().getTime() - savedTime;
+        tInterval = setInterval(updateTime, 1);
+        running = true;
+        logAction('Started');
+        saveLogBtn.disabled = true;
+    }
+}
 
-        function logTimestamp() {
-            if (running) {
-                logAction('Timestamp', true);
-            }
-        }
+function logTimestamp() {
+    if (running) {
+        logAction('Timestamp', true);
+    }
+}
 
-        function stop() {
-            if (running) {
-                logAction('Stopped');
-                clearInterval(tInterval);
-                savedTime = 0;
-                running = false;
-                timeDisplay.innerHTML = "00:00:00";
-                document.getElementById('saveLogBtn').disabled = false;
-                document.getElementById('clearLogBtn').style.display = 'inline-block';
-            }
-        }
+function stop() {
+    if (running) {
+        logAction('Stopped');
+        clearInterval(tInterval);
+        savedTime = 0;
+        running = false;
+        timeDisplay.innerHTML = "00:00:00";
+        saveLogBtn.disabled = false;
+    }
+}
 
-        function updateTime() {
-            updatedTime = new Date().getTime();
-            difference = updatedTime - startTime;
+function updateTime() {
+    updatedTime = new Date().getTime();
+    difference = updatedTime - startTime;
 
-            let hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            let minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-            let seconds = Math.floor((difference % (1000 * 60)) / 1000);
+    let hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    let minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+    let seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-            hours = (hours < 10) ? "0" + hours : hours;
-            minutes = (minutes < 10) ? "0" + minutes : minutes;
-            seconds = (seconds < 10) ? "0" + seconds : seconds;
+    hours = (hours < 10) ? "0" + hours : hours;
+    minutes = (minutes < 10) ? "0" + minutes : minutes;
+    seconds = (seconds < 10) ? "0" + seconds : seconds;
 
-            timeDisplay.innerHTML = hours + ':' + minutes + ':' + seconds;
-        }
+    timeDisplay.innerHTML = hours + ':' + minutes + ':' + seconds;
+}
 
-        function logAction(action, withInput = false) {
-            const stopwatchTime = timeDisplay.innerHTML;
-            const currentTime = new Date();
-            const clockTime = currentTime.toTimeString().split(' ')[0];
-            timestampCount++;
-            const listItem = document.createElement('li');
-            listItem.className = 'log-item';
-            listItem.innerHTML = `
-                <span>${timestampCount}. ${action} at ${stopwatchTime} (Clock: ${clockTime})</span>
-                ${withInput ? '<input type="text" placeholder="Enter details...">' : ''}
-            `;
-            logList.appendChild(listItem);
-        }
+function logAction(action, withInput = false) {
+    const stopwatchTime = timeDisplay.innerHTML;
+    const currentTime = new Date();
+    const clockTime = currentTime.toTimeString().split(' ')[0];
+    timestampCount++;
+    const listItem = document.createElement('li');
+    listItem.className = 'log-item';
+    listItem.innerHTML = `
+        <span>${timestampCount}. ${action} at ${stopwatchTime} (Clock: ${clockTime})</span>
+        ${withInput ? '<input type="text" placeholder="Enter details...">' : ''}
+    `;
+    logList.appendChild(listItem);
+}
+
+function clearLog() {
+    logList.innerHTML = '';
+    timestampCount = 0;
+}
+
+function saveLog() {
+    const name = prompt("Please enter your name:");
+    if (name) {
+        const logText = `${name}'s Log\n\n` + Array.from(logList.children)
+            .map(item => item.textContent.trim())
+            .join('\n');
+        const blob = new Blob([logText], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'stopwatch_log.txt';
+        a.click();
+        URL.revokeObjectURL(url);
+    } else {
+        alert("Name cannot be empty. Log not saved.");
+    }
+}
     </script>
 </body>
 </html>
