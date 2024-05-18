@@ -78,21 +78,19 @@
         document.getElementById('saveLogBtn').addEventListener('click', saveLog);
 
         function toggleStartStop() {
-            if (!running) {
-                start();
-                startStopBtn.textContent = 'Stop';
-                document.getElementById('timestampBtn').style.display = 'inline'; // Show Timestamp button when Start
-                if (timestampCount > 0) {
-                    document.getElementById('clearLogBtn').style.display = 'inline'; // Show Clear Log button when there are Timestamps in log
-                    document.getElementById('saveLogBtn').style.display = 'inline'; // Show Save Log button when there are Timestamps in log
-                }
-            } else {
-                stop();
-                startStopBtn.textContent = 'Start';
-                document.getElementById('timestampBtn').style.display = 'none'; // Hide Timestamp button when Stop
-                document.getElementById('clearLogBtn').style.display = 'none'; // Hide Clear Log button when Stop
-                document.getElementById('saveLogBtn').style.display = 'none'; // Hide Save Log button when Stop
-            }
+           if (!running) {
+        start();
+        startStopBtn.textContent = 'Stop';
+        document.getElementById('timestampBtn').style.display = 'inline'; // แสดงปุ่ม Timestamp เมื่อ Start
+        document.getElementById('clearLogBtn').style.display = 'none'; // ซ่อนปุ่ม Clear Log เมื่อ Start
+        document.getElementById('saveLogBtn').style.display = 'none'; // ซ่อนปุ่ม Save Log เมื่อ Start
+    } else {
+        stop();
+        startStopBtn.textContent = 'Start';
+        document.getElementById('timestampBtn').style.display = 'none'; // ซ่อนปุ่ม Timestamp เมื่อ Stop
+        document.getElementById('clearLogBtn').style.display = 'inline'; // แสดงปุ่ม Clear Log เมื่อ Stop
+        document.getElementById('saveLogBtn').style.display = 'inline'; // แสดงปุ่ม Save Log เมื่อ Stop
+    }
         }
 
         function start() {
