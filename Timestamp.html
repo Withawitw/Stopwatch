@@ -157,4 +157,18 @@
                 const spanText = item.querySelector('span').textContent;
                 const input = item.querySelector('input');
                 const inputText = input ? input.value : '';
-                logText += `${span
+                logText += `${spanText} - ${inputText}\n`;
+            }
+            const blob = new Blob([logText], { type: 'text/plain' });
+            const anchor = document.createElement('a');
+            anchor.download = 'log.txt';
+            anchor.href = window.URL.createObjectURL(blob);
+            anchor.target = '_blank';
+            anchor.style.display = 'none';
+            document.body.appendChild(anchor);
+            anchor.click();
+            document.body.removeChild(anchor);
+        }
+
+        function disableSaveLogBtn(disabled) {
+            document.getElementById
