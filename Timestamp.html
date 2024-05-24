@@ -64,6 +64,14 @@
             padding: 10px 20px;
             margin: 5px;
         }
+        .project-info {
+            margin-bottom: 20px;
+        }
+        .project-info input {
+            font-size: 1em;
+            padding: 10px;
+            margin: 5px;
+        }
     </style>
 </head>
 <body>
@@ -73,6 +81,10 @@
             <div class="clock" id="clock">00:00:00</div>
             <div class="header"><h1>Timer</h1></div>
             <div class="time" id="time">00:00:00</div>
+            <div class="project-info">
+                <input type="text" id="projectName" placeholder="Enter project name">
+                <input type="date" id="logDate">
+            </div>
             <div class="buttons">
                 <button id="startStopBtn">Start</button>
                 <button id="timestampBtn" style="display: none;">Timestamp</button>
@@ -165,12 +177,14 @@
         function clearLog() {
             logList.innerHTML = '';
             timestampCount = 1;
-		timeDisplay.innerHTML = "00:00:00";
+            timeDisplay.innerHTML = "00:00:00";
         }
 
         function saveLog() {
+            const projectName = document.getElementById('projectName').value.trim() || 'Log';
+            const logDate = document.getElementById('logDate').value || new Date().toISOString().split('T')[0];
             const logItems = logList.getElementsByTagName('li');
-            let logText = '';
+            let logText = `Project: ${projectName}\nDate: ${logDate}\n\n`;
             for (let item of logItems) {
                 const spanText = item.querySelector('span').textContent;
                 const inputText = item.querySelector('input').value;
@@ -178,10 +192,10 @@
             }
             const blob = new Blob([logText], { type: 'text/plain' });
             const anchor = document.createElement('a');
-            anchor.download = 'log.txt';
+            anchor.download = `${projectName}_${logDate}.txt`;
             anchor.href = window.URL.createObjectURL(blob);
             anchor.target = '_blank';
-            anchor.style.display = 'none'; // Do not display the anchor on the web page
+            anchor.style.display = 'none';
             document.body.appendChild(anchor);
             anchor.click();
             document.body.removeChild(anchor);
