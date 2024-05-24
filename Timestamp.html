@@ -182,10 +182,17 @@
             listItem.innerHTML = `
                 <span>${timestampCount}. ${action} at ${stopwatchTime} (Clock: ${clockTime})</span>
                 <input type="text" placeholder="Enter details...">
-                <button onclick="deleteLog(this)">Delete</button>
+                <button onclick="confirmDeleteLog(this)">Delete</button>
             `;
             logList.appendChild(listItem);
             timestampCount++;
+        }
+
+        function confirmDeleteLog(button) {
+            const confirmation = confirm("Delete Log?");
+            if (confirmation) {
+                deleteLog(button);
+            }
         }
 
         function deleteLog(button) {
