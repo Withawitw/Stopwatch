@@ -12,6 +12,7 @@
             align-items: center;
             height: 100vh;
             background-color: #f0f0f0;
+            position: relative; /* Added to position the version text */
         }
         .container {
             display: flex;
@@ -20,13 +21,13 @@
         }
         .stopwatch {
             text-align: center;
-            width: 50%; /* ปรับขนาดให้เล็กลงเพื่อเพิ่มขนาดช่อง Log */
+            width: 50%;
         }
         .log {
             margin-top: 20px;
-            width: 50%; /* เพิ่มความกว้างของช่อง Log */
-            max-height: 500px; /* เพิ่มขนาดสูงสุดของกล่องบันทึก */
-            overflow-y: auto;  /* เปิดใช้งานการเลื่อนในแนวตั้ง */
+            width: 50%;
+            max-height: 500px;
+            overflow-y: auto;
             background: white;
             padding: 10px;
             border: 1px solid #ccc;
@@ -50,13 +51,14 @@
         }
         .log-item input {
             flex-grow: 1;
+            margin-right: 10px;
         }
         .time {
             font-size: 6em;
             margin-bottom: 20px;
         }
         .clock {
-            font-size: 5em; /* เพิ่มขนาดฟอนต์ของนาฬิกา */
+            font-size: 5em;
             margin-bottom: 20px;
         }
         .buttons button {
@@ -71,6 +73,13 @@
             font-size: 1em;
             padding: 10px;
             margin: 5px;
+        }
+        .version {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 0.8em;
+            color: #888;
         }
     </style>
 </head>
@@ -97,6 +106,7 @@
             <ul id="logList"></ul>
         </div>
     </div>
+    <div class="version">Version 2.1</div>
 
     <script>
         let startTime, updatedTime, difference, tInterval;
@@ -108,11 +118,14 @@
         const clockDisplay = document.getElementById('clock');
         const logList = document.getElementById('logList');
         const startStopBtn = document.getElementById('startStopBtn');
+        const timestampBtn = document.getElementById('timestampBtn');
+        const clearLogBtn = document.getElementById('clearLogBtn');
+        const saveLogBtn = document.getElementById('saveLogBtn');
 
         startStopBtn.addEventListener('click', toggleStartStop);
-        document.getElementById('timestampBtn').addEventListener('click', logTimestamp);
-        document.getElementById('clearLogBtn').addEventListener('click', clearLog);
-        document.getElementById('saveLogBtn').addEventListener('click', saveLog);
+        timestampBtn.addEventListener('click', logTimestamp);
+        clearLogBtn.addEventListener('click', confirmClearLog);
+        saveLogBtn.addEventListener('click', saveLog);
 
         function toggleStartStop() {
             if (!running) {
@@ -169,15 +182,41 @@
             listItem.innerHTML = `
                 <span>${timestampCount}. ${action} at ${stopwatchTime} (Clock: ${clockTime})</span>
                 <input type="text" placeholder="Enter details...">
+                <button onclick="deleteLog(this)">Delete</button>
             `;
             logList.appendChild(listItem);
             timestampCount++;
+        }
+
+        function deleteLog(button) {
+            const logItem = button.parentElement;
+            logList.removeChild(logItem);
+            updateTimestampNumbers();
+        }
+
+        function updateTimestampNumbers() {
+            const logItems = logList.getElementsByTagName('li');
+            timestampCount = 1;
+            for (let item of logItems) {
+                const span = item.querySelector('span');
+                span.textContent = span.textContent.replace(/^\d+/, timestampCount);
+                timestampCount++;
+            }
+        }
+
+        function confirmClearLog() {
+            const confirmation = confirm("Delete Log and Reset?");
+            if (confirmation) {
+                clearLog();
+            }
         }
 
         function clearLog() {
             logList.innerHTML = '';
             timestampCount = 1;
             timeDisplay.innerHTML = "00:00:00";
+            clearLogBtn.style.display = 'none';
+            saveLogBtn.style.display = 'none';
         }
 
         function saveLog() {
@@ -206,9 +245,9 @@
         }
 
         function updateButtonVisibility(isRunning) {
-            document.getElementById('timestampBtn').style.display = isRunning ? 'inline' : 'none';
-            document.getElementById('clearLogBtn').style.display = isRunning ? 'none' : 'inline';
-            document.getElementById('saveLogBtn').style.display = isRunning ? 'none' : 'inline';
+            timestampBtn.style.display = isRunning ? 'inline' : 'none';
+            clearLogBtn.style.display = isRunning ? 'none' : 'inline';
+            saveLogBtn.style.display = isRunning ? 'none' : 'inline';
         }
 
         setInterval(updateClock, 1000);
